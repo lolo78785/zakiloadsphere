@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaki LoadSphere - Your Ultimate Download Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0f0f1a; --bg-secondary: #1a1a2e; --bg-card: #252542;
+            --text-primary: #ffffff; --text-secondary: #b0b0c0; --accent: #6c5ce7;
+            --accent-hover: #5b4cdb; --success: #00b894; --warning: #fdcb6e;
+            --danger: #d63031; --border: rgba(255,255,255,0.1);
+            --shadow: 0 10px 40px rgba(0,0,0,0.3);
+            --gradient: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            --blur-bg: rgba(15, 15, 26, 0.8);
+        }
+        body.theme-default { --bg-primary: #0f0f1a; --bg-secondary: #1a1a2e; --bg-card: #252542; --text-primary: #ffffff; --text-secondary: #b0b0c0; --accent: #6c5ce7; }
+        body.theme-ocean { --bg-primary: #0a1628; --bg-secondary: #123454; --bg-card: #1a4a7a; --text-primary: #e8f4f8; --text-secondary: #8ecae6; --accent: #0077b6; --gradient: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%); }
+        body.theme-forest { --bg-primary: #0d1f12; --bg-secondary: #1a3d25; --bg-card: #255235; --text-primary: #e8f5e9; --text-secondary: #a5d6a7; --accent: #4caf50; --gradient: linear-gradient(135deg, #4caf50 0%, #81c784 100%); }
+        body.theme-sunset { --bg-primary: #1f0f0a; --bg-secondary: #3d1a12; --bg-card: #52251a; --text-primary: #fff3e0; --text-secondary: #ffcc80; --accent: #ff6b35; --gradient: linear-gradient(135deg, #ff6b35 0%, #ff9f43 100%); }
+        body.theme-purple { --bg-primary: #1a0f2e; --bg-secondary: #2d1a4d; --bg-card: #3d2566; --text-primary: #f3e8ff; --text-secondary: #d8b4e2; --accent: #9b59b6; --gradient: linear-gradient(135deg, #9b59b6 0%, #be90d4 100%); }
+        body.theme-crimson { --bg-primary: #1f0a0a; --bg-secondary: #3d1212; --bg-card: #521a1a; --text-primary: #ffebee; --text-secondary: #ef9a9a; --accent: #e74c3c; --gradient: linear-gradient(135deg, #e74c3c 0%, #ff6b6b 100%); }
+        body.theme-golden { --bg-primary: #1f1a0a; --bg-secondary: #3d3312; --bg-card: #52451a; --text-primary: #fff8e1; --text-secondary: #ffe082; --accent: #f1c40f; --gradient: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); }
+        body.theme-ice { --bg-primary: #0a1f2e; --bg-secondary: #123d52; --bg-card: #1a5266; --text-primary: #e1f5fe; --text-secondary: #81d4fa; --accent: #03a9f4; --gradient: linear-gradient(135deg, #03a9f4 0%, #4fc3f7 100%); }
+        body.theme-midnight { --bg-primary: #000000; --bg-secondary: #1a1a1a; --bg-card: #2d2d2d; --text-primary: #ffffff; --text-secondary: #b0b0b0; --accent: #3498db; --gradient: linear-gradient(135deg, #3498db 0%, #5dade2 100%); }
+        body.theme-mint { --bg-primary: #0a1f1a; --bg-secondary: #123d33; --bg-card: #1a5245; --text-primary: #e0f2f1; --text-secondary: #80cbc4; --accent: #26a69a; --gradient: linear-gradient(135deg, #26a69a 0%, #4db6ac 100%); }
+        body.theme-rose { --bg-primary: #1f0a14; --bg-secondary: #3d1228; --bg-card: #521a38; --text-primary: #fce4ec; --text-secondary: #f48fb1; --accent: #e91e63; --gradient: linear-gradient(135deg, #e91e63 0%, #ec407a 100%); }
+        body.theme-neon { --bg-primary: #0a0a1a; --bg-secondary: #1a1a3d; --bg-card: #252552; --text-primary: #00ffff; --text-secondary: #00bcd4; --accent: #ff00ff; --gradient: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%); }
+        body.theme-light { --bg-primary: #f5f7fa; --bg-secondary: #ffffff; --bg-card: #ffffff; --text-primary: #2d3436; --text-secondary: #636e72; --accent: #6c5ce7; --shadow: 0 10px 40px rgba(0,0,0,0.1); --border: rgba(0,0,0,0.1); }
+        body.theme-earth { --bg-primary: #1f140a; --bg-secondary: #3d2812; --bg-card: #52361a; --text-primary: #efebe9; --text-secondary: #d7ccc8; --accent: #8d6e63; --gradient: linear-gradient(135deg, #8d6e63 0%, #a1887f 100%); }
+        body.theme-galaxy { --bg-primary: #0f0a1f; --bg-secondary: #1a123d; --bg-card: #251a52; --text-primary: #e8e4ff; --text-secondary: #b8b2e8; --accent: #7c4dff; --gradient: linear-gradient(135deg, #7c4dff 0%, #b388ff 100%); }
+        body.theme-cyber { --bg-primary: #0a0e1f; --bg-secondary: #1a1f3a; --bg-card: #252b52; --text-primary: #00ffff; --text-secondary: #00bcd4; --accent: #ff00ff; --gradient: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%); }
+        body.theme-autumn { --bg-primary: #1f140a; --bg-secondary: #3d2812; --bg-card: #52361a; --text-primary: #ffe4c4; --text-secondary: #deb887; --accent: #d2691e; --gradient: linear-gradient(135deg, #d2691e 0%, #ff8c00 100%); }
+        body.theme-lavender { --bg-primary: #1a142e; --bg-secondary: #2d1f4d; --bg-card: #3d2a66; --text-primary: #f0e6ff; --text-secondary: #d8bfd8; --accent: #9370db; --gradient: linear-gradient(135deg, #9370db 0%, #ba55d3 100%); }
+        body.theme-teal { --bg-primary: #0a1f1f; --bg-secondary: #123d3d; --bg-card: #1a5252; --text-primary: #e0ffff; --text-secondary: #afeeee; --accent: #20b2aa; --gradient: linear-gradient(135deg, #20b2aa 0%, #48d1cc 100%); }
+        body.theme-cherry { --bg-primary: #1f0a14; --bg-secondary: #3d1228; --bg-card: #521a38; --text-primary: #fff0f5; --text-secondary: #ffb6c1; --accent: #dc143c; --gradient: linear-gradient(135deg, #dc143c 0%, #ff69b4 100%); }
+        /* NEW THEMES */
+        body.theme-midnight-blue { --bg-primary: #0a0f1f; --bg-secondary: #1a233a; --bg-card: #253052; --text-primary: #e0e8ff; --text-secondary: #a0b0d0; --accent: #4a90e2; --gradient: linear-gradient(135deg, #4a90e2 0%, #6bb3f0 100%); }
+        body.theme-emerald { --bg-primary: #0a1f15; --bg-secondary: #1a3a2a; --bg-card: #255240; --text-primary: #e0fff0; --text-secondary: #a0d0c0; --accent: #2ecc71; --gradient: linear-gradient(135deg, #2ecc71 0%, #58d68d 100%); }
+        body.theme-royal { --bg-primary: #1f0a1a; --bg-secondary: #3a1a2a; --bg-card: #522540; --text-primary: #ffe0f0; --text-secondary: #d0a0c0; --accent: #e91e63; --gradient: linear-gradient(135deg, #e91e63 0%, #f06292 100%); }
+        body.theme-amber { --bg-primary: #1f150a; --bg-secondary: #3a2a1a; --bg-card: #524025; --text-primary: #fff0e0; --text-secondary: #d0c0a0; --accent: #f39c12; --gradient: linear-gradient(135deg, #f39c12 0%, #f5b041 100%); }
+        body.theme-slate { --bg-primary: #1a1a2e; --bg-secondary: #252542; --bg-card: #2f2f5a; --text-primary: #d0d0e0; --text-secondary: #9090b0; --accent: #7f8c8d; --gradient: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%); }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; }
+        #main-wrapper { transition: filter 0.4s ease; min-height: 100vh; display: flex; flex-direction: column; }
+        #main-wrapper.modal-active { filter: blur(8px); overflow: hidden; pointer-events: none; }
+        .navbar { background: var(--blur-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 15px 0; position: sticky; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+        .logo i { font-size: 2rem; }
+        .search-bar { display: flex; background: var(--bg-card); border-radius: 50px; padding: 5px 20px; border: 1px solid var(--border); width: 400px; }
+        .search-bar input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); padding: 10px; font-size: 1rem; }
+        .search-bar button { background: var(--accent); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; transition: 0.3s; }
+        .nav-icons { display: flex; gap: 10px; }
+        .icon-wrapper { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; color: var(--text-secondary); }
+        .icon-wrapper:hover { background: var(--bg-card); color: var(--accent); transform: translateY(-3px); }
+        .icon-wrapper i { font-size: 1.3rem; }
+        .icon-wrapper span { font-size: 0.75rem; }
+        .hero { background: var(--gradient); padding: 80px 30px; text-align: center; }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 20px; }
+        .hero .highlight { background: rgba(255,255,255,0.2); padding: 5px 20px; border-radius: 10px; }
+        .hero p { font-size: 1.3rem; opacity: 0.9; margin-bottom: 40px; }
+        .hero-stats { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; }
+        .stat { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 15px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+        .categories-section { padding: 80px 30px; max-width: 1400px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; position: relative; }
+        .section-title::after { content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 100px; height: 4px; background: var(--gradient); border-radius: 2px; }
+        .categories-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; width: 100%; }
+        .category-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 30px 20px; text-align: center; cursor: pointer; transition: all 0.4s ease; }
+        .category-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .cat-icon { width: 70px; height: 70px; background: var(--gradient); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.8rem; color: white; }
+        .category-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .category-card p { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 15px; }
+        .content-section { padding: 80px 30px; max-width: 1400px; margin: 0 auto; }
+        .filter-tags { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+        .filter-tag { padding: 10px 25px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; transition: 0.3s; }
+        .filter-tag:hover, .filter-tag.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        .content-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 25px; overflow: hidden; transition: all 0.4s ease; cursor: pointer; }
+        .content-card:hover { transform: translateY(-10px); box-shadow: 0 20px 60px rgba(108, 92, 231, 0.3); border-color: var(--accent); }
+        .card-image-container { position: relative; width: 100%; height: 200px; overflow: hidden; }
+        .card-image { width: 100%; height: 100%; object-fit: cover; background: var(--bg-secondary); transition: transform 0.4s ease; }
+        .content-card:hover .card-image { transform: scale(1.1); }
+        .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .content-card:hover .card-overlay { opacity: 1; }
+        .card-action-btn { background: var(--gradient); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: transform 0.3s ease; }
+        .card-action-btn:hover { transform: scale(1.1); }
+        .card-btn-detail { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
+        .card-btn-download { background: var(--success); }
+        .card-badge-container { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .card-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-official { background: var(--success); color: white; }
+        .badge-cracked { background: var(--warning); color: black; }
+        .badge-mod { background: var(--accent); color: white; }
+        .badge-quality { background: var(--accent); color: white; }
+        .badge-filetype { background: var(--warning); color: black; }
+        .card-body { padding: 25px; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-title { font-size: 1.3rem; font-weight: 700; }
+        .card-rating-display { display: flex; align-items: center; gap: 5px; color: var(--warning); font-weight: 600; }
+        .card-rating-display i { font-size: 0.9rem; }
+        .card-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border); }
+        .card-platform { display: flex; gap: 8px; }
+        .platform-icon { width: 35px; height: 35px; background: var(--bg-secondary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; }
+        
+        /* Pagination Styles */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 40px; flex-wrap: wrap; }
+        .pagination button { padding: 10px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); cursor: pointer; transition: 0.3s; }
+        .pagination button:hover { background: var(--accent); border-color: var(--accent); }
+        .pagination button.active { background: var(--accent); border-color: var(--accent); }
+        .pagination .page-info { padding: 10px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); }
+        
+        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 60px 30px 20px; margin-top: auto; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-section h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: var(--accent); }
+        .footer-section h4 { margin-bottom: 15px; }
+        .footer-section a { display: block; color: var(--text-secondary); text-decoration: none; margin-bottom: 10px; transition: 0.3s; }
+        .footer-section a:hover { color: var(--accent); padding-left: 5px; }
+        .contact-icons { display: flex; gap: 15px; }
+        .contact-icons a { width: 45px; height: 45px; background: var(--bg-card); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: 0.3s; }
+        .contact-icons a:hover { background: var(--accent); transform: translateY(-5px); }
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid var(--border); color: var(--text-secondary); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-panel { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 25px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; animation: modalSlide 0.4s ease; }
+        @keyframes modalSlide { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 25px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-secondary); z-index: 1; }
+        .panel-header h3 { display: flex; align-items: center; gap: 10px; }
+        .close-btn { font-size: 2rem; cursor: pointer; color: var(--text-secondary); transition: 0.3s; }
+        .close-btn:hover { color: var(--danger); }
+        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; padding: 25px; }
+        .theme-option { padding: 20px 15px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
+        .theme-option:hover { transform: scale(1.05); }
+        .theme-option.active { border-color: var(--accent); }
+        .theme-preview { width: 40px; height: 40px; border-radius: 10px; margin: 0 auto 10px; }
+        .lang-options { padding: 25px; }
+        .lang-option { display: flex; align-items: center; gap: 15px; padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        .lang-option:hover { background: var(--bg-card); }
+        .flag { font-size: 1.5rem; }
+        .cats-tree { padding: 25px; }
+        .cat-level { margin-bottom: 20px; }
+        .cat-level-title { font-weight: 600; margin-bottom: 10px; color: var(--accent); }
+        .cat-sub { display: flex; flex-wrap: wrap; gap: 10px; }
+        .cat-chip { padding: 8px 16px; background: var(--bg-card); border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; }
+        .cat-chip:hover { background: var(--accent); color: white; }
+        .form-group { margin-bottom: 20px; padding: 0 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 15px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 1rem; outline: none; transition: 0.3s; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+        .form-group textarea { white-space: pre-wrap; }
+        .image-upload-container { margin-bottom: 20px; padding: 0 25px; }
+        .image-preview { width: 100%; max-width: 300px; height: 200px; border-radius: 15px; background: var(--bg-card); border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; overflow: hidden; }
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .image-preview .placeholder { color: var(--text-secondary); text-align: center; padding: 20px; }
+        .image-preview .placeholder i { font-size: 3rem; margin-bottom: 10px; color: var(--accent); }
+        .upload-btn { display: block; width: calc(100% - 50px); margin: 0 25px; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); cursor: pointer; text-align: center; transition: 0.3s; }
+        .upload-btn:hover { background: var(--accent); border-color: var(--accent); }
+        #imageInput { display: none; }
+        .btn-primary { width: calc(100% - 50px); margin: 0 25px 25px; padding: 15px; background: var(--gradient); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4); }
+        .btn-danger { width: calc(100% - 50px); margin: 10px 25px; padding: 15px; background: var(--danger); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .admin-tabs { display: flex; padding: 0 25px; gap: 10px; border-bottom: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 15px; background: var(--bg-card); border: none; border-radius: 12px 12px 0 0; color: var(--text-secondary); cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent); color: white; }
+        .admin-tab { padding: 25px; }
+        .manage-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg-card); border-radius: 12px; margin-bottom: 10px; }
+        .manage-item button { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; margin-left: 5px; }
+        .btn-edit { background: var(--warning); color: black; }
+        .btn-delete { background: var(--danger); color: white; }
+        .content-detail { padding: 25px; }
+        .content-detail img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
+        .content-detail .tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .content-detail .download-links { margin-top: 20px; }
+        .download-link { display: block; padding: 15px; background: var(--bg-card); border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: var(--text-primary); transition: 0.3s; }
+        .download-link:hover { background: var(--accent); }
+        .rating-stars { display: flex; gap: 5px; margin: 20px 0; }
+        .rating-stars i { font-size: 1.5rem; color: var(--bg-card); cursor: pointer; transition: 0.3s; }
+        .rating-stars i.active, .rating-stars i:hover { color: var(--warning); }
+        .firebase-config-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; margin: 20px; }
+        .firebase-config-panel h4 { color: var(--accent); margin-bottom: 15px; }
+        .firebase-status { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        .firebase-status.connected { background: rgba(0, 184, 148, 0.2); color: var(--success); }
+        .firebase-status.disconnected { background: rgba(214, 48, 49, 0.2); color: var(--danger); }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            font-weight: 600;
+        }
+        .notification.show { display: flex; }
+        .notification.error { background: var(--danger); }
+        .notification.warning { background: var(--warning); color: black; }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-value { animation: countUp 0.8s ease-out; }
+        
+        .multi-select-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            min-height: 50px;
+        }
+        .multi-select-option {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .multi-select-option.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .multi-select-option:hover { border-color: var(--accent); }
+        
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .download-parts-container { margin-top: 10px; }
+        .part-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .part-item input, .part-item select { flex: 1; min-width: 150px; }
+        .part-number {
+            background: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        .quality-select { min-width: 120px !important; }
+        .quality-link-input { flex: 2 !important; min-width: 200px !important; }
+        .btn-small {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-add { background: var(--success); color: white; }
+        .btn-remove { background: var(--danger); color: white; }
+        
+        .video-preview {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            margin: 10px auto;
+            background: var(--bg-secondary);
+        }
+        .video-preview video { width: 100%; border-radius: 15px; }
+        
+        .detail-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .detail-gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .detail-gallery-item:hover { transform: scale(1.05); }
+        .detail-gallery-item img, .detail-gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .quality-section { margin: 20px 0; }
+        .quality-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .quality-name {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .quality-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--success);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .quality-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+        }
+        
+        .formatted-description {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        
+        .card-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card-image.loaded {
+            opacity: 1;
+        }
+        
+        @media (max-width: 1200px) { .categories-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; gap: 15px; }
+            .search-bar { width: 100%; order: 3; }
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 20px; }
+            .stat { padding: 10px 20px; }
+            .nav-icons { gap: 5px; }
+            .icon-wrapper span { display: none; }
+            .categories-grid { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) { .categories-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="theme-default">
+    <div id="notificationContainer"></div>
+    
+    <div id="main-wrapper">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo"><i class="fas fa-globe"></i><span id="siteName">Zaki LoadSphere</span></div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search apps, games, films...">
+                    <button onclick="searchContent()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <div class="icon-wrapper" onclick="openThemePanel()"><i class="fas fa-palette"></i><span>Theme</span></div>
+                    <div class="icon-wrapper" onclick="openLanguagePanel()"><i class="fas fa-globe"></i><span>Lang</span></div>
+                    <div class="icon-wrapper" onclick="openCategoriesPanel()"><i class="fas fa-th-large"></i><span>Cats</span></div>
+                    <div class="icon-wrapper" onclick="openAdminPanel()"><i class="fas fa-user-shield"></i><span>Admin</span></div>
+                </div>
+            </div>
+        </nav>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to <span class="highlight">Zaki LoadSphere</span></h1>
+                <p>Your ultimate destination for Software, Games, Films, Books & More</p>
+                <div class="hero-stats">
+                    <div class="stat"><i class="fas fa-download"></i> <span class="stat-value" id="total-downloads">0</span> Downloads</div>
+                    <div class="stat"><i class="fas fa-box"></i> <span class="stat-value" id="total-items">0</span> Items</div>
+                    <div class="stat"><i class="fas fa-users"></i> <span class="stat-value" id="total-users">0</span> Users</div>
+                </div>
+            </div>
+        </section>
+        <section class="categories-section">
+            <h2 class="section-title">Explore Categories</h2>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterByCategory('App')"><div class="cat-icon"><i class="fas fa-desktop"></i></div><h3>App & Software</h3><p>Browsers, Security, Tools, Adobe & More</p></div>
+                <div class="category-card" onclick="filterByCategory('Game')"><div class="cat-icon"><i class="fas fa-gamepad"></i></div><h3>Games</h3><p>Action, Horror, Adventure, Simulation</p></div>
+                <div class="category-card" onclick="filterByCategory('OS')"><div class="cat-icon"><i class="fas fa-hdd"></i></div><h3>Operating Systems</h3><p>Windows, macOS, Linux</p></div>
+                <div class="category-card" onclick="filterByCategory('Film')"><div class="cat-icon"><i class="fas fa-film"></i></div><h3>Films</h3><p>Action, Drama, Comedy, Animation</p></div>
+                <div class="category-card" onclick="filterByCategory('Book')"><div class="cat-icon"><i class="fas fa-book"></i></div><h3>Books</h3><p>Informatics, Islamic & More</p></div>
+            </div>
+        </section>
+        <section class="content-section">
+            <h2 class="section-title">Latest Content</h2>
+            <div class="filter-tags" id="filterTags"></div>
+            <div class="content-grid" id="contentGrid"></div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section"><h3><i class="fas fa-globe"></i> <span id="footerSiteName">Zaki LoadSphere</span></h3><p>Your trusted source for digital content</p></div>
+                <div class="footer-section"><h4>Quick Links</h4><a href="#" onclick="filterByCategory('App');return false;">Software</a><a href="#" onclick="filterByCategory('Game');return false;">Games</a><a href="#" onclick="filterByCategory('Film');return false;">Films</a></div>
+                <div class="footer-section"><h4>Contact Us</h4><div class="contact-icons" id="footerContacts"></div></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Zaki LoadSphere. All rights reserved.</p></div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="themeModal"><div class="modal-panel"><div class="panel-header"><h3><i class="fas fa-palette"></i> Choose Theme</h3><span class="close-btn" onclick="closeModal('themeModal')">&times;</span></div><div class="theme-grid" id="themeGrid"></div></div></div>
+    <div class="modal-overlay" id="languageModal"><div class="modal-panel"><div class="panel-header"><h3><i class="fas fa-globe"></i> Select Language</h3><span class="close-btn" onclick="closeModal('languageModal')">&times;</span></div><div class="lang-options"><div class="lang-option" onclick="setLanguage('en')"><span class="flag">🇺🇸</span> English</div><div class="lang-option" onclick="setLanguage('fr')"><span class="flag">🇫🇷</span> Français</div><div class="lang-option" onclick="setLanguage('ar')"><span class="flag">🇸</span> العربية</div></div></div></div>
+    <div class="modal-overlay" id="categoriesModal"><div class="modal-panel"><div class="panel-header"><h3><i class="fas fa-th-large"></i> Browse Categories</h3><span class="close-btn" onclick="closeModal('categoriesModal')">&times;</span></div><div class="cats-tree" id="catsTree"></div></div></div>
+    <div class="modal-overlay" id="loginModal"><div class="modal-panel"><div class="panel-header"><h3><i class="fas fa-user-shield"></i> Admin Login</h3><span class="close-btn" onclick="closeModal('loginModal')">&times;</span></div><form onsubmit="handleLogin(event)"><div class="form-group"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username" required></div><div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password" required></div><button type="submit" class="btn-primary">Login</button></form></div></div>
+    
+    <div class="modal-overlay" id="adminModal"><div class="modal-panel admin-panel"><div class="panel-header"><h3><i class="fas fa-cog"></i> Admin Panel</h3><span class="close-btn" onclick="closeModal('adminModal')">&times;</span></div>
+    
+    <div class="firebase-config-panel">
+        <h4><i class="fas fa-database"></i> Storage Status</h4>
+        <div class="firebase-status connected" id="storageStatus">
+            <i class="fas fa-check-circle"></i>
+            <span id="storageStatusText">Using IndexedDB (1GB Storage)</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; padding: 0 25px;">Large storage capacity for images, videos, and content!</p>
+    </div>
+    
+    <div class="admin-tabs"><button class="tab-btn active" onclick="showAdminTab('add')">Add Content</button><button class="tab-btn" onclick="showAdminTab('manage')">Manage</button><button class="tab-btn" onclick="showAdminTab('settings')">Settings</button></div>
+    
+    <div class="admin-tab" id="addTab">
+        <div class="image-upload-container">
+            <label>Main Image (Auto-compressed)</label>
+            <div class="image-preview" id="imagePreview"><div class="placeholder"><i class="fas fa-image"></i><p>Click "Choose File" to upload</p></div></div>
+            <label class="upload-btn" for="imageInput"><i class="fas fa-upload"></i> Choose File</label>
+            <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+        </div>
+        
+        <div class="form-group">
+            <label>Additional Photos (Auto-compressed)</label>
+            <div class="gallery-container" id="galleryContainer"></div>
+            <label class="upload-btn" for="galleryInput" style="margin-top: 10px;"><i class="fas fa-plus"></i> Add More Photos</label>
+            <input type="file" id="galleryInput" accept="image/*" multiple onchange="handleGalleryUpload(event)" style="display: none;">
+        </div>
+        
+        <div class="form-group"><label>Title</label><input type="text" id="itemTitle" placeholder="Enter title"></div>
+        <div class="form-group"><label>Category</label><select id="itemCategory" onchange="toggleItemFields()"><option value="App">App & Software</option><option value="Game">Game</option><option value="OS">Operating System</option><option value="Film">Film</option><option value="Book">Book</option></select></div>
+        <div class="form-group"><label>Platform</label><select id="itemPlatform"><option value="PC">PC</option><option value="Mac">Mac</option><option value="Android">Android</option><option value="Linux">Linux</option></select></div>
+        
+        <div class="form-group" id="subCategoryField">
+            <label>Sub-Category (Select Multiple for Games)</label>
+            <div class="multi-select-container" id="subCategoryContainer"></div>
+            <input type="hidden" id="itemSubCategory">
+        </div>
+        
+        <div class="form-group" id="fileSizeField" style="display:none;">
+            <label><i class="fas fa-hdd"></i> File Size</label>
+            <input type="text" id="itemFileSize" placeholder="e.g. 489 KB, 1.5 GB">
+        </div>
+        
+        <div class="form-group" id="fileTypeField" style="display:none;">
+            <label><i class="fas fa-file"></i> File Type</label>
+            <select id="itemFileType">
+                <option value="">Select Type</option>
+                <option value="EXE">EXE</option>
+                <option value="ZIP">ZIP</option>
+                <option value="RAR">RAR</option>
+                <option value="ISO">ISO</option>
+                <option value="DMG">DMG</option>
+                <option value="APK">APK</option>
+                <option value="PDF">PDF</option>
+                <option value="EPUB">EPUB</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="gameDownloadField" style="display:none;">
+            <label>
+                <input type="checkbox" id="hasMultipleParts" onchange="toggleGameDownloadType()"> 
+                Has Multiple Parts?
+            </label>
+            
+            <div id="singleLinkField">
+                <label>Download Link</label>
+                <input type="text" id="singleDownloadLink" placeholder="Enter download link">
+            </div>
+            
+            <div id="multiplePartsField" style="display:none;">
+                <div class="download-parts-container" id="downloadPartsContainer"></div>
+                <button type="button" class="btn-small btn-add" onclick="addDownloadPart()"><i class="fas fa-plus"></i> Add Part</button>
+            </div>
+        </div>
+        
+        <div class="form-group" id="filmQualitiesField" style="display:none;">
+            <label>Film Qualities</label>
+            <div class="download-parts-container" id="filmQualitiesContainer"></div>
+            <button type="button" class="btn-small btn-add" onclick="addFilmQuality()"><i class="fas fa-plus"></i> Add Quality</button>
+        </div>
+        
+        <div class="form-group" id="trailerField" style="display:none;">
+            <label><i class="fas fa-video"></i> Video Trailer (Use URL for large videos)</label>
+            <input type="file" id="trailerInput" accept="video/*" onchange="handleTrailerUpload(event)">
+            <div class="video-preview" id="trailerPreview"></div>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 5px;">For large videos, upload to YouTube/Vimeo and paste URL</p>
+        </div>
+        
+        <div class="form-group" id="licenseField"><label>License Type</label><select id="itemLicense"><option value="Official">Official</option><option value="Cracked">Cracked</option><option value="Mod">Mod</option></select></div>
+        <div class="form-group" id="yearField" style="display:none;"><label>Year</label><input type="number" id="itemYear" placeholder="e.g. 2024"></div>
+        <div class="form-group"><label>Short Description</label><textarea id="itemShortDesc" rows="2" placeholder="Brief summary"></textarea></div>
+        <div class="form-group"><label>Full Description</label><textarea id="itemFullDesc" rows="6" placeholder="Detailed description (line breaks will be preserved)"></textarea></div>
+        <div class="form-group" id="simpleLinksField" style="display:none;"><label>Download Links (comma separated)</label><input type="text" id="itemLinks" placeholder="link1, link2, link3"></div>
+        <button class="btn-primary" id="addContentBtn" onclick="addItem()">Add Content</button>
+    </div>
+    
+    <div class="admin-tab" id="manageTab" style="display:none;"><div id="manageList"></div></div>
+    
+    <div class="admin-tab" id="settingsTab" style="display:none;">
+        <div class="form-group"><label>Website Name</label><input type="text" id="settingSiteName" value="Zaki LoadSphere"></div>
+        <div class="form-group"><label>New Password</label><input type="password" id="settingPassword" placeholder="Leave empty to keep current"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="settingEmail" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="settingPhone" placeholder="+123456789"></div>
+        <div class="form-group"><label>Instagram</label><input type="text" id="settingInstagram" placeholder="yourusername"></div>
+        <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+        <button class="btn-danger" onclick="logout()" style="margin-top:10px;">Logout</button>
+    </div>
+    </div></div>
+    
+    <div class="modal-overlay" id="contentModal"><div class="modal-panel"><div class="panel-header"><h3 id="contentTitle">Content Title</h3><span class="close-btn" onclick="closeModal('contentModal')">&times;</span></div><div class="content-detail" id="contentDetail"></div></div></div>
+
+    <script>
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyBFIsefQWG5zBg7wy1PW1QrNEUW6nB1LK0",
+            authDomain: "loadsphere-c3cd5.firebaseapp.com",
+            projectId: "loadsphere-c3cd5",
+            storageBucket: "loadsphere-c3cd5.firebasestorage.app",
+            messagingSenderId: "974481587973",
+            appId: "1:974481587973:web:2b44e3c3cd2bdbc246816c"
+        };
+        
+        let db = null;
+        let useFirebase = false;
+        let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        let dbInstance = null;
+        const DB_NAME = 'ZakiLoadSphereDB';
+        const DB_VERSION = 1;
+        const COLLECTIONS = { items: 'items', settings: 'settings' };
+        const CATEGORIES = { 
+            App: ['Browser', 'Security', 'Tools', 'Edits', 'Programming', 'Adobe', 'Microsoft Office'], 
+            Game: ['Football', 'Horror', 'Adventure', 'Action', 'Simulation', 'RPG', 'Strategy', 'Sports'], 
+            OS: ['Windows', 'macOS', 'Linux'], 
+            Film: ['Action', 'Adventure', 'Horror', 'Animation', 'Drama', 'Comedy'], 
+            Book: ['Informatics', 'Islamic', 'Programming', 'Design', 'Business'] 
+        };
+        const PLATFORMS = ['PC', 'Mac', 'Android', 'Linux'];
+        const THEMES = [
+            { name: 'Default', class: 'theme-default', colors: ['#0f0f1a', '#6c5ce7'] },
+            { name: 'Ocean', class: 'theme-ocean', colors: ['#0a1628', '#0077b6'] },
+            { name: 'Forest', class: 'theme-forest', colors: ['#0d1f12', '#4caf50'] },
+            { name: 'Sunset', class: 'theme-sunset', colors: ['#1f0f0a', '#ff6b35'] },
+            { name: 'Purple', class: 'theme-purple', colors: ['#1a0f2e', '#9b59b6'] },
+            { name: 'Crimson', class: 'theme-crimson', colors: ['#1f0a0a', '#e74c3c'] },
+            { name: 'Golden', class: 'theme-golden', colors: ['#1f1a0a', '#f1c40f'] },
+            { name: 'Ice', class: 'theme-ice', colors: ['#0a1f2e', '#03a9f4'] },
+            { name: 'Midnight', class: 'theme-midnight', colors: ['#000000', '#3498db'] },
+            { name: 'Mint', class: 'theme-mint', colors: ['#0a1f1a', '#26a69a'] },
+            { name: 'Rose', class: 'theme-rose', colors: ['#1f0a14', '#e91e63'] },
+            { name: 'Neon', class: 'theme-neon', colors: ['#0a0a1a', '#ff00ff'] },
+            { name: 'Light', class: 'theme-light', colors: ['#f5f7fa', '#6c5ce7'] },
+            { name: 'Earth', class: 'theme-earth', colors: ['#1f140a', '#8d6e63'] },
+            { name: 'Galaxy', class: 'theme-galaxy', colors: ['#0f0a1f', '#7c4dff'] },
+            { name: 'Cyber', class: 'theme-cyber', colors: ['#0a0e1f', '#ff00ff'] },
+            { name: 'Autumn', class: 'theme-autumn', colors: ['#1f140a', '#d2691e'] },
+            { name: 'Lavender', class: 'theme-lavender', colors: ['#1a142e', '#9370db'] },
+            { name: 'Teal', class: 'theme-teal', colors: ['#0a1f1f', '#20b2aa'] },
+            { name: 'Cherry', class: 'theme-cherry', colors: ['#1f0a14', '#dc143c'] },
+            { name: 'Midnight Blue', class: 'theme-midnight-blue', colors: ['#0a0f1f', '#4a90e2'] },
+            { name: 'Emerald', class: 'theme-emerald', colors: ['#0a1f15', '#2ecc71'] },
+            { name: 'Royal', class: 'theme-royal', colors: ['#1f0a1a', '#e91e63'] },
+            { name: 'Amber', class: 'theme-amber', colors: ['#1f150a', '#f39c12'] },
+            { name: 'Slate', class: 'theme-slate', colors: ['#1a1a2e', '#7f8c8d'] }
+        ];
+        let currentFilters = { category: 'App', platform: null, subCategory: null };
+        let uploadedImageBase64 = '';
+        let galleryImages = [];
+        let trailerBase64 = '';
+        let downloadParts = [];
+        let filmQualities = [];
+        let settingsSaveInProgress = false;
+        let editingId = null;
+        let currentPage = 1;
+        const itemsPerPage = 4;
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle'}"></i><span>${message}</span>`;
+            container.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => { dbInstance = request.result; resolve(dbInstance); };
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('items')) db.createObjectStore('items', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
+                };
+            });
+        }
+
+        async function saveToIndexedDB(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = dbInstance.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function getAllFromIndexedDB(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = dbInstance.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result || []);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function deleteFromIndexedDB(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = dbInstance.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(key);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function initializeFirebase() {
+            try {
+                firebase.initializeApp(FIREBASE_CONFIG);
+                db = firebase.firestore();
+                useFirebase = true;
+                updateStorageStatus(true);
+            } catch(e) { updateStorageStatus(false); }
+        }
+
+        function updateStorageStatus(connected) {
+            const statusEl = document.getElementById('storageStatus');
+            const statusText = document.getElementById('storageStatusText');
+            if (connected) {
+                statusEl.className = 'firebase-status connected';
+                statusText.innerHTML = '<i class="fas fa-check-circle"></i> Using IndexedDB + Firebase (1GB+ Storage)';
+            } else {
+                statusEl.className = 'firebase-status connected';
+                statusText.innerHTML = '<i class="fas fa-check-circle"></i> Using IndexedDB (1GB Storage)';
+            }
+        }
+
+        async function firebaseGetItems() {
+            try {
+                const items = await getAllFromIndexedDB('items');
+                return items;
+            } catch(e) { return []; }
+        }
+
+        async function firebaseSaveItem(item) {
+            try {
+                await saveToIndexedDB('items', item);
+                showNotification('Content ' + (editingId ? 'updated' : 'added') + ' successfully!', 'success');
+            } catch(e) { showNotification('Error saving data', 'error'); }
+        }
+
+        async function firebaseDeleteItem(id) {
+            try { await deleteFromIndexedDB('items', id); } catch(e) {}
+            return true;
+        }
+
+        async function firebaseGetSettings() {
+            try {
+                const transaction = dbInstance.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                const request = store.get('config');
+                return new Promise((resolve) => {
+                    request.onsuccess = () => resolve(request.result ? request.result.value : getSettings());
+                    request.onerror = () => resolve(getSettings());
+                });
+            } catch(e) { return getSettings(); }
+        }
+
+        async function firebaseSaveSettings(settings) {
+            try {
+                await saveToIndexedDB('settings', { key: 'config', value: settings });
+            } catch(e) {}
+        }
+
+        function getSettings() { 
+            try { return JSON.parse(localStorage.getItem('settings')) || { siteName: 'Zaki LoadSphere', password: 'Zakaria112007*', contacts: { email: '', phone: '', instagram: '' } }; } 
+            catch(e) { return { siteName: 'Zaki LoadSphere', password: 'Zakaria112007*', contacts: {} }; } 
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) { 
+                uploadedImageBase64 = e.target.result; 
+                document.getElementById('imagePreview').innerHTML = '<img src="' + uploadedImageBase64 + '" alt="Preview">'; 
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleGalleryUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    galleryImages.push(e.target.result);
+                    renderGallery();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('galleryContainer');
+            if (!container) return;
+            container.innerHTML = galleryImages.map((img, index) => 
+                '<div class="gallery-item"><img src="' + img + '" alt="Gallery ' + (index + 1) + '"><button class="gallery-remove" onclick="removeGalleryImage(' + index + ')"><i class="fas fa-times"></i></button></div>'
+            ).join('');
+        }
+
+        function removeGalleryImage(index) {
+            galleryImages.splice(index, 1);
+            renderGallery();
+        }
+
+        function handleTrailerUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                trailerBase64 = e.target.result;
+                const preview = document.getElementById('trailerPreview');
+                preview.innerHTML = '<video controls><source src="' + trailerBase64 + '" type="' + file.type + '">Your browser does not support the video tag.</video>';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleGameDownloadType() {
+            const hasMultiple = document.getElementById('hasMultipleParts').checked;
+            document.getElementById('singleLinkField').style.display = hasMultiple ? 'none' : 'block';
+            document.getElementById('multiplePartsField').style.display = hasMultiple ? 'block' : 'none';
+        }
+
+        function addDownloadPart() {
+            const container = document.getElementById('downloadPartsContainer');
+            const partNumber = downloadParts.length + 1;
+            const partId = 'part-' + partNumber;
+            const partDiv = document.createElement('div');
+            partDiv.className = 'part-item';
+            partDiv.id = partId;
+            partDiv.innerHTML = '<span class="part-number">Part ' + partNumber + '</span><input type="text" placeholder="Download link for part ' + partNumber + '" class="part-link"><button type="button" class="btn-small btn-remove" onclick="removeDownloadPart(\'' + partId + '\')"><i class="fas fa-trash"></i></button>';
+            container.appendChild(partDiv);
+            downloadParts.push(partId);
+        }
+
+        function removeDownloadPart(partId) {
+            const element = document.getElementById(partId);
+            if (element) {
+                element.remove();
+                downloadParts = downloadParts.filter(id => id !== partId);
+                const parts = document.querySelectorAll('.part-item');
+                parts.forEach((part, index) => {
+                    part.querySelector('.part-number').textContent = 'Part ' + (index + 1);
+                    part.querySelector('input').placeholder = 'Download link for part ' + (index + 1);
+                });
+            }
+        }
+
+        function addFilmQuality() {
+            const container = document.getElementById('filmQualitiesContainer');
+            const qualityNumber = filmQualities.length + 1;
+            const qualityId = 'quality-' + qualityNumber;
+            const qualityDiv = document.createElement('div');
+            qualityDiv.className = 'part-item';
+            qualityDiv.id = qualityId;
+            qualityDiv.innerHTML = '<select class="quality-select"><option value="480p">480p</option><option value="720p">720p</option><option value="1080p">1080p</option><option value="2160p">2160p (4K)</option></select><input type="text" placeholder="Download link for this quality" class="quality-link-input"><button type="button" class="btn-small btn-remove" onclick="removeFilmQuality(\'' + qualityId + '\')"><i class="fas fa-trash"></i></button>';
+            container.appendChild(qualityDiv);
+            filmQualities.push(qualityId);
+        }
+
+        function removeFilmQuality(qualityId) {
+            const element = document.getElementById(qualityId);
+            if (element) {
+                element.remove();
+                filmQualities = filmQualities.filter(id => id !== qualityId);
+            }
+        }
+
+        function openModal(modalId) { 
+            const modal = document.getElementById(modalId); 
+            if (modal) { 
+                modal.style.display = 'flex'; 
+                document.getElementById('main-wrapper').classList.add('modal-active'); 
+            } 
+        }
+        
+        function closeModal(modalId) { 
+            const modal = document.getElementById(modalId); 
+            if (modal) { 
+                modal.style.display = 'none'; 
+                document.getElementById('main-wrapper').classList.remove('modal-active'); 
+            } 
+        }
+
+        function renderThemePanel() { 
+            const grid = document.getElementById('themeGrid'); 
+            if (!grid) return; 
+            const currentTheme = localStorage.getItem('theme') || 'theme-default'; 
+            grid.innerHTML = THEMES.map(function(theme) { 
+                const isActive = theme.class === currentTheme ? 'active' : ''; 
+                return '<div class="theme-option ' + isActive + '" onclick="setTheme(\'' + theme.class + '\')"><div class="theme-preview" style="background: linear-gradient(135deg, ' + theme.colors[0] + ', ' + theme.colors[1] + ')"></div><span>' + theme.name + '</span></div>'; 
+            }).join(''); 
+        }
+        
+        function setTheme(themeClass) { 
+            document.body.className = themeClass; 
+            localStorage.setItem('theme', themeClass); 
+            renderThemePanel();
+            showNotification('Theme changed!', 'success');
+        }
+        
+        function loadTheme() { 
+            const saved = localStorage.getItem('theme') || 'theme-default'; 
+            document.body.className = saved; 
+        }
+        
+        function openThemePanel() { 
+            renderThemePanel();
+            openModal('themeModal'); 
+        }
+
+        function setLanguage(lang) { 
+            localStorage.setItem('language', lang); 
+            const t = { 
+                en: { welcome: 'Welcome to Zaki LoadSphere', subtitle: 'Your ultimate destination for Software, Games, Films, Books & More', search: 'Search apps, games, films...' }, 
+                fr: { welcome: 'Bienvenue sur Zaki LoadSphere', subtitle: 'Votre destination ultime pour Logiciels, Jeux, Films, Livres et plus', search: 'Rechercher applications, jeux, films...' }, 
+                ar: { welcome: 'مرحبًا بكم في Zaki LoadSphere', subtitle: 'وجهتك النهائية للبرامج والألعاب والأفلام والكتب والمزيد', search: 'بحث عن تطبيقات، ألعاب، أفلام...' } 
+            }[lang] || { welcome: 'Welcome to Zaki LoadSphere', subtitle: 'Your ultimate destination for Software, Games, Films, Books & More', search: 'Search apps, games, films...' }; 
+            const heroH1 = document.querySelector('.hero h1'); 
+            const heroP = document.querySelector('.hero p'); 
+            const searchInput = document.getElementById('searchInput'); 
+            if (heroH1) heroH1.innerHTML = t.welcome.replace('Zaki LoadSphere', '<span class="highlight">Zaki LoadSphere</span>'); 
+            if (heroP) heroP.textContent = t.subtitle; 
+            if (searchInput) searchInput.placeholder = t.search; 
+            closeModal('languageModal'); 
+            showNotification('Language changed!', 'success'); 
+        }
+        
+        function loadLanguage() { 
+            const saved = localStorage.getItem('language') || 'en'; 
+            setLanguage(saved); 
+        }
+        
+        function openLanguagePanel() { openModal('languageModal'); }
+
+        function renderCategoriesTree() { 
+            const tree = document.getElementById('catsTree'); 
+            if (!tree) return; 
+            let html = ''; 
+            html += '<div class="cat-level"><div class="cat-level-title">📱 Platform</div><div class="cat-sub">'; 
+            PLATFORMS.forEach(function(p) { html += '<span class="cat-chip" onclick="filterByPlatform(\'' + p + '\')">' + p + '</span>'; }); 
+            html += '</div></div>'; 
+            html += '<div class="cat-level"><div class="cat-level-title">📂 Category</div><div class="cat-sub">'; 
+            Object.keys(CATEGORIES).forEach(function(cat) { html += '<span class="cat-chip" onclick="filterByCategory(\'' + cat + '\')">' + cat + '</span>'; }); 
+            html += '</div></div>'; 
+            html += '<div class="cat-level"><div class="cat-level-title">🏷️ Sub-Category</div><div class="cat-sub">'; 
+            const allSubs = []; 
+            Object.values(CATEGORIES).forEach(function(subs) { subs.forEach(function(sub) { if (allSubs.indexOf(sub) === -1) allSubs.push(sub); }); }); 
+            allSubs.forEach(function(sub) { html += '<span class="cat-chip" onclick="filterBySubCategory(\'' + sub + '\')">' + sub + '</span>'; }); 
+            html += '</div></div>'; 
+            tree.innerHTML = html; 
+        }
+        
+        function openCategoriesPanel() { openModal('categoriesModal'); }
+
+        function filterByCategory(cat) { 
+            currentFilters.category = cat; 
+            currentPage = 1;
+            updateFilterTags(); 
+            loadContent(); 
+            closeModal('categoriesModal'); 
+        }
+        function filterByPlatform(platform) { 
+            currentFilters.platform = platform; 
+            currentPage = 1;
+            updateFilterTags(); 
+            loadContent(); 
+            closeModal('categoriesModal'); 
+        }
+        function filterBySubCategory(sub) { 
+            currentFilters.subCategory = sub; 
+            currentPage = 1;
+            updateFilterTags(); 
+            loadContent(); 
+            closeModal('categoriesModal'); 
+        }
+        function clearFilters() { 
+            currentFilters = { category: 'App', platform: null, subCategory: null }; 
+            currentPage = 1;
+            updateFilterTags(); 
+            loadContent(); 
+        }
+        function updateFilterTags() { 
+            const container = document.getElementById('filterTags'); 
+            if (!container) return; 
+            let tags = ''; 
+            if (currentFilters.category) tags += '<span class="filter-tag active">' + currentFilters.category + '</span>'; 
+            if (currentFilters.platform) tags += '<span class="filter-tag active">' + currentFilters.platform + '</span>'; 
+            if (currentFilters.subCategory) tags += '<span class="filter-tag active">' + currentFilters.subCategory + '</span>'; 
+            container.innerHTML = tags; 
+        }
+
+        async function loadContent() { 
+            let items = await firebaseGetItems(); 
+            if (currentFilters.category) items = items.filter(function(item) { return item.category === currentFilters.category; }); 
+            if (currentFilters.platform) items = items.filter(function(item) { return item.platform === currentFilters.platform; }); 
+            if (currentFilters.subCategory) items = items.filter(function(item) { 
+                if (Array.isArray(item.subCategory)) return item.subCategory.includes(currentFilters.subCategory);
+                return item.subCategory === currentFilters.subCategory; 
+            }); 
+            
+            const grid = document.getElementById('contentGrid'); 
+            if (!grid) return; 
+            
+            if (items.length === 0) { 
+                grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:var(--text-secondary);padding:40px;">No content found. Login as admin to add content!</p>'; 
+                document.getElementById('total-items').textContent = '0';
+                renderPagination(0);
+                return; 
+            }
+            
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedItems = items.slice(startIndex, endIndex);
+            
+            grid.innerHTML = paginatedItems.map(function(item) { return createContentCard(item); }).join(''); 
+            document.getElementById('total-items').textContent = items.length;
+            renderPagination(totalPages);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderPagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination || totalPages === 0) {
+                if (pagination) pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            if (currentPage > 1) {
+                html += '<button onclick="changePage(' + (currentPage - 1) + ')"><i class="fas fa-chevron-left"></i></button>';
+            }
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += '<button class="' + (i === currentPage ? 'active' : '') + '" onclick="changePage(' + i + ')">' + i + '/' + totalPages + '</button>';
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += '<span style="color: var(--text-secondary);">...</span>';
+                }
+            }
+            
+            if (currentPage < totalPages) {
+                html += '<button onclick="changePage(' + (currentPage + 1) + ')"><i class="fas fa-chevron-right"></i></button>';
+            }
+            
+            pagination.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function lazyLoadImages() {
+            const images = document.querySelectorAll('.card-image');
+            images.forEach(img => {
+                if (!img.classList.contains('loaded')) {
+                    img.classList.add('loaded');
+                }
+            });
+        }
+        
+        function createContentCard(item) { 
+            let badge = ''; 
+            if (item.licenseType) badge = '<span class="card-badge badge-' + item.licenseType.toLowerCase() + '">' + item.licenseType + '</span>'; 
+            else if (item.quality) badge = '<span class="card-badge badge-quality">' + item.quality + '</span>'; 
+            if (item.fileType) badge += '<span class="card-badge badge-filetype">' + item.fileType + '</span>';
+            
+            let avgRating = 'New'; 
+            let ratingStars = '';
+            if (item.ratings && item.ratings.length > 0) { 
+                let sum = 0; 
+                item.ratings.forEach(function(r) { sum += r; }); 
+                avgRating = (sum / item.ratings.length).toFixed(1);
+                const fullStars = Math.floor(avgRating);
+                const hasHalf = avgRating % 1 >= 0.5;
+                for (let i = 0; i < fullStars; i++) ratingStars += '<i class="fas fa-star"></i>';
+                if (hasHalf) ratingStars += '<i class="fas fa-star-half-alt"></i>';
+                const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+                for (let i = 0; i < emptyStars; i++) ratingStars += '<i class="far fa-star"></i>';
+            } else {
+                ratingStars = '<i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
+            }
+            
+            const imgUrl = item.image || 'https://via.placeholder.com/400x200/6c5ce7/ffffff?text=' + encodeURIComponent(item.title);
+            const hasMultipleDownloads = (item.downloadParts && item.downloadParts.length > 1) || (item.filmQualities && item.filmQualities.length > 0) || (item.category === 'Book' && item.links && item.links.length > 0);
+            
+            return '<div class="content-card" data-id="' + item.id + '">' +
+                '<div class="card-image-container">' +
+                    '<img src="' + imgUrl + '" class="card-image" alt="' + item.title + '" loading="lazy">' +
+                    '<div class="card-overlay">' +
+                        '<button class="card-action-btn card-btn-detail" onclick="event.stopPropagation(); openContentDetail(\'' + item.id + '\')"><i class="fas fa-eye"></i> Details</button>' +
+                        '<button class="card-action-btn card-btn-download" onclick="event.stopPropagation(); downloadItem(\'' + (item.downloadLink ? item.downloadLink : (item.links && item.links[0] ? item.links[0] : '#')) + '\', \'' + item.id + '\')"><i class="fas fa-download"></i> Download</button>' +
+                    '</div>' +
+                    '<div class="card-badge-container">' + badge + '</div>' +
+                '</div>' +
+                '<div class="card-body">' +
+                    '<div class="card-header">' +
+                        '<h4 class="card-title">' + item.title + '</h4>' +
+                        (item.ratings && item.ratings.length > 0 ? '<div class="card-rating-display">' + ratingStars + '<span>' + avgRating + '</span></div>' : '') +
+                    '</div>' +
+                    '<p class="card-desc">' + item.shortDesc + '</p>' +
+                    '<div class="card-meta">' +
+                        '<div class="card-platform"><span class="platform-icon">' + item.platform + '</span></div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'; 
+        }
+        
+        function downloadItem(link, itemId) { 
+            if (link && link !== '#') { 
+                window.open(link, '_blank');
+                incrementCounter('total-downloads');
+                incrementItemDownloads(itemId);
+            } else { 
+                showNotification('No download link!', 'error'); 
+            } 
+        }
+
+        async function incrementItemDownloads(itemId) {
+            const items = await firebaseGetItems();
+            const itemIndex = items.findIndex(i => i.id === itemId);
+            if (itemIndex > -1) {
+                if (!items[itemIndex].downloads) items[itemIndex].downloads = 0;
+                items[itemIndex].downloads++;
+                await firebaseSaveItem(items[itemIndex]);
+            }
+        }
+        
+        async function openContentDetail(id) { 
+            const items = await firebaseGetItems();
+            let item = null; 
+            items.forEach(function(i) { if (i.id === id) item = i; }); 
+            if (!item) return; 
+            
+            document.getElementById('contentTitle').textContent = item.title; 
+            
+            let badge = ''; 
+            if (item.licenseType) badge += '<span class="cat-chip">' + item.licenseType + '</span>'; 
+            if (item.quality) badge += '<span class="cat-chip">' + item.quality + '</span>'; 
+            if (item.year) badge += '<span class="cat-chip">' + item.year + '</span>'; 
+            if (item.fileSize) badge += '<span class="cat-chip"><i class="fas fa-hdd"></i> ' + item.fileSize + '</span>'; 
+            if (item.fileType) badge += '<span class="cat-chip"><i class="fas fa-file"></i> ' + item.fileType + '</span>'; 
+            
+            if (item.subCategory) {
+                if (Array.isArray(item.subCategory)) {
+                    badge += '<span class="cat-chip"><i class="fas fa-tags"></i> ' + item.subCategory.join(', ') + '</span>';
+                } else {
+                    badge += '<span class="cat-chip"><i class="fas fa-tag"></i> ' + item.subCategory + '</span>';
+                }
+            }
+            
+            let avgRating = 'New'; 
+            if (item.ratings && item.ratings.length > 0) { 
+                let sum = 0; 
+                item.ratings.forEach(function(r) { sum += r; }); 
+                avgRating = (sum / item.ratings.length).toFixed(1); 
+            } 
+            
+            const hasRated = localStorage.getItem('rated_' + id);
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (hasRated) {
+                    const userRating = parseInt(hasRated);
+                    const activeClass = i <= userRating ? 'active' : '';
+                    starsHtml += '<i class="fas fa-star ' + activeClass + '" style="cursor:not-allowed;opacity:0.5"></i>';
+                } else {
+                    starsHtml += '<i class="fas fa-star" onclick="rateItem(\'' + id + '\', ' + i + ')" style="cursor:pointer"></i>';
+                }
+            }
+            
+            let galleryHtml = '';
+            if (item.gallery && item.gallery.length > 0) {
+                galleryHtml = '<h4>Gallery</h4><div class="detail-gallery">';
+                item.gallery.forEach(function(img) {
+                    galleryHtml += '<div class="detail-gallery-item"><img src="' + img + '" alt="Gallery image"></div>';
+                });
+                galleryHtml += '</div>';
+            }
+            
+            let trailerHtml = '';
+            if (item.trailer) {
+                trailerHtml = '<h4>Video Trailer</h4><div class="video-preview"><video controls><source src="' + item.trailer + '" type="video/mp4">Your browser does not support the video tag.</video></div>';
+            }
+            
+            let linksHtml = '<h4>Download Links</h4>';
+            
+            if (item.category === 'Game' && item.downloadParts && item.downloadParts.length > 0) {
+                item.downloadParts.forEach(function(part, index) {
+                    if (part) {
+                        linksHtml += '<a href="' + part + '" class="download-link" target="_blank"><i class="fas fa-download"></i> Part ' + (index + 1) + '</a>';
+                    }
+                });
+            }
+            else if (item.category === 'Film' && item.filmQualities && item.filmQualities.length > 0) {
+                linksHtml += '<div class="quality-section">';
+                item.filmQualities.forEach(function(quality) {
+                    if (quality.link) {
+                        linksHtml += '<div class="quality-item">' +
+                            '<div class="quality-name"><i class="fas fa-video"></i> ' + quality.quality + '</div>' +
+                            '<a href="' + quality.link + '" class="quality-link" target="_blank"><i class="fas fa-download"></i> Download</a>' +
+                            '</div>';
+                    }
+                });
+                linksHtml += '</div>';
+            }
+            else if (item.downloadLink) {
+                linksHtml += '<a href="' + item.downloadLink + '" class="download-link" target="_blank"><i class="fas fa-download"></i> Download</a>';
+            } else if (item.links && item.links.length > 0) {
+                item.links.forEach(function(link, index) {
+                    linksHtml += '<a href="' + link + '" class="download-link" target="_blank"><i class="fas fa-download"></i> Download Link ' + (index + 1) + '</a>';
+                });
+            } else {
+                linksHtml += '<p style="color: var(--text-secondary);">No download links available</p>';
+            }
+            
+            const formattedDesc = item.fullDesc ? item.fullDesc.replace(/\n/g, '<br>') : '';
+            
+            document.getElementById('contentDetail').innerHTML = 
+                '<img src="' + (item.image || 'https://via.placeholder.com/600x300') + '" alt="' + item.title + '">' +
+                galleryHtml +
+                trailerHtml +
+                '<div class="tags"><span class="cat-chip">' + item.platform + '</span><span class="cat-chip">' + item.category + '</span>' + badge + '</div>' +
+                '<h4>Short Description</h4><p style="color:var(--text-secondary);margin-bottom:20px;">' + item.shortDesc + '</p>' +
+                '<h4>Full Description</h4><div class="formatted-description" style="color:var(--text-secondary);margin-bottom:20px;">' + formattedDesc + '</div>' +
+                '<h4>Rating: ' + avgRating + ' / 5</h4><div class="rating-stars">' + starsHtml + '</div>' +
+                (hasRated ? '<p style="color:var(--text-secondary);font-size:0.9rem;"><i class="fas fa-check-circle"></i> You already rated this item</p>' : '<p style="color:var(--text-secondary);font-size:0.9rem;">Click stars to rate</p>') +
+                '<div class="download-links">' + linksHtml + '</div>'; 
+            
+            openModal('contentModal'); 
+        }
+
+        async function rateItem(id, stars) {
+            const hasRated = localStorage.getItem('rated_' + id);
+            if (hasRated) {
+                showNotification('Already rated!', 'warning');
+                return;
+            }
+            localStorage.setItem('rated_' + id, stars.toString());
+            showNotification('Rated ' + stars + ' stars!', 'success');
+            openContentDetail(id);
+        }
+
+        async function searchContent() { 
+            const query = document.getElementById('searchInput').value.toLowerCase(); 
+            if (!query) return; 
+            const items = await firebaseGetItems(); 
+            const filtered = items.filter(function(item) { 
+                return item.title.toLowerCase().indexOf(query) > -1 || item.shortDesc.toLowerCase().indexOf(query) > -1; 
+            }); 
+            const grid = document.getElementById('contentGrid'); 
+            if (filtered.length === 0) { 
+                grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:var(--text-secondary);padding:40px;">No results</p>'; 
+            } else { 
+                grid.innerHTML = filtered.map(function(item) { return createContentCard(item); }).join(''); 
+            } 
+        }
+
+        function openAdminPanel() { 
+            if (sessionStorage.getItem('isAdmin') === 'true') { 
+                openModal('adminModal'); 
+                loadManageList(); 
+            } else { 
+                openModal('loginModal'); 
+            } 
+        }
+        
+        function handleLogin(event) { 
+            event.preventDefault(); 
+            const username = document.getElementById('loginUser').value; 
+            const password = document.getElementById('loginPass').value; 
+            const settings = getSettings(); 
+            if (username === 'zaki' && password === settings.password) { 
+                sessionStorage.setItem('isAdmin', 'true'); 
+                showNotification('Login successful!', 'success'); 
+                closeModal('loginModal'); 
+                openModal('adminModal'); 
+                loadManageList(); 
+            } else { 
+                showNotification('Invalid credentials!', 'error'); 
+            } 
+        }
+        
+        function logout() { 
+            sessionStorage.removeItem('isAdmin'); 
+            closeModal('adminModal'); 
+            showNotification('Logged out', 'success'); 
+        }
+        
+        function showAdminTab(tab) { 
+            const tabs = document.querySelectorAll('.admin-tab'); 
+            tabs.forEach(function(t) { t.style.display = 'none'; }); 
+            const buttons = document.querySelectorAll('.tab-btn'); 
+            buttons.forEach(function(b) { b.classList.remove('active'); }); 
+            document.getElementById(tab + 'Tab').style.display = 'block'; 
+            event.target.classList.add('active'); 
+            if (tab === 'manage') loadManageList(); 
+            if (tab === 'settings') loadSettingsForm(); 
+        }
+        
+        function toggleItemFields() { 
+            const category = document.getElementById('itemCategory').value; 
+            const isFilm = category === 'Film'; 
+            const isGame = category === 'Game';
+            const isSoftware = ['App', 'Game', 'OS'].indexOf(category) > -1; 
+            document.getElementById('fileSizeField').style.display = isSoftware ? 'block' : 'none'; 
+            document.getElementById('fileTypeField').style.display = isSoftware ? 'block' : 'none'; 
+            document.getElementById('yearField').style.display = isFilm ? 'block' : 'none'; 
+            document.getElementById('trailerField').style.display = (isGame || isFilm) ? 'block' : 'none'; 
+            document.getElementById('gameDownloadField').style.display = isGame ? 'block' : 'none';
+            document.getElementById('filmQualitiesField').style.display = isFilm ? 'block' : 'none';
+            document.getElementById('simpleLinksField').style.display = (isSoftware && !isGame) || category === 'Book' ? 'block' : 'none';
+            renderSubCategorySelect(category);
+        }
+
+        function renderSubCategorySelect(category) {
+            const container = document.getElementById('subCategoryContainer');
+            const subs = CATEGORIES[category] || [];
+            const isGame = category === 'Game';
+            container.innerHTML = subs.map(function(sub) {
+                return '<div class="multi-select-option" onclick="toggleSubCategory(this, \'' + sub + '\', ' + isGame + ')" data-value="' + sub + '">' + sub + '</div>';
+            }).join('');
+        }
+
+        function toggleSubCategory(element, value, isMulti) {
+            if (isMulti) {
+                element.classList.toggle('selected');
+                const selected = Array.from(document.querySelectorAll('.multi-select-option.selected')).map(el => el.dataset.value);
+                document.getElementById('itemSubCategory').value = JSON.stringify(selected);
+            } else {
+                document.querySelectorAll('.multi-select-option').forEach(el => el.classList.remove('selected'));
+                element.classList.add('selected');
+                document.getElementById('itemSubCategory').value = value;
+            }
+        }
+
+        async function addItem() { 
+            const category = document.getElementById('itemCategory').value; 
+            const subCategoryValue = document.getElementById('itemSubCategory').value;
+            let subCategory = subCategoryValue;
+            if (category === 'Game' && subCategoryValue.startsWith('[')) {
+                try { subCategory = JSON.parse(subCategoryValue); } catch(e) { subCategory = subCategoryValue; }
+            }
+            let downloadLink = null;
+            let downloadPartsArray = [];
+            let filmQualitiesArray = [];
+            if (category === 'Game') {
+                const hasMultiple = document.getElementById('hasMultipleParts').checked;
+                if (hasMultiple) {
+                    document.querySelectorAll('.part-item').forEach(function(part) {
+                        const link = part.querySelector('.part-link').value.trim();
+                        if (link) downloadPartsArray.push(link);
+                    });
+                } else {
+                    downloadLink = document.getElementById('singleDownloadLink').value.trim();
+                }
+            } else if (category === 'Film') {
+                document.querySelectorAll('.part-item').forEach(function(part) {
+                    const quality = part.querySelector('.quality-select').value;
+                    const link = part.querySelector('.quality-link-input').value.trim();
+                    if (link) filmQualitiesArray.push({ quality: quality, link: link });
+                });
+            }
+            const item = { 
+                id: editingId || Date.now().toString(), 
+                title: document.getElementById('itemTitle').value, 
+                category: category, 
+                platform: document.getElementById('itemPlatform').value, 
+                subCategory: subCategory,
+                shortDesc: document.getElementById('itemShortDesc').value, 
+                fullDesc: document.getElementById('itemFullDesc').value, 
+                image: uploadedImageBase64, 
+                gallery: galleryImages,
+                trailer: trailerBase64,
+                downloadLink: downloadLink,
+                downloadParts: downloadPartsArray.length > 0 ? downloadPartsArray : null,
+                filmQualities: filmQualitiesArray.length > 0 ? filmQualitiesArray : null,
+                links: category === 'Film' || category === 'Game' ? null : document.getElementById('itemLinks').value.split(',').filter(function(l) { return l.trim(); }),
+                ratings: [], 
+                downloads: 0,
+                licenseType: ['App', 'Game', 'OS'].indexOf(category) > -1 ? document.getElementById('itemLicense').value : null, 
+                quality: category === 'Film' ? document.getElementById('itemQuality').value : null, 
+                year: category === 'Film' ? document.getElementById('itemYear').value : null,
+                fileSize: ['App', 'Game', 'OS'].indexOf(category) > -1 ? document.getElementById('itemFileSize').value : null,
+                fileType: ['App', 'Game', 'OS'].indexOf(category) > -1 ? document.getElementById('itemFileType').value : null
+            }; 
+            if (!item.title || !item.shortDesc) { showNotification('Fill in Title and Short Description', 'error'); return; } 
+            await firebaseSaveItem(item);
+            editingId = null;
+            document.getElementById('addContentBtn').textContent = 'Add Content';
+            document.getElementById('itemTitle').value = ''; 
+            document.getElementById('itemShortDesc').value = ''; 
+            document.getElementById('itemFullDesc').value = ''; 
+            document.getElementById('itemLinks').value = ''; 
+            document.getElementById('singleDownloadLink').value = '';
+            document.getElementById('hasMultipleParts').checked = false;
+            document.getElementById('imagePreview').innerHTML = '<div class="placeholder"><i class="fas fa-image"></i><p>Click "Choose File" to upload</p></div>';
+            document.getElementById('imageInput').value = '';
+            document.getElementById('itemFileSize').value = '';
+            document.getElementById('itemFileType').value = '';
+            document.getElementById('itemSubCategory').value = '';
+            uploadedImageBase64 = '';
+            galleryImages = [];
+            trailerBase64 = '';
+            downloadParts = [];
+            filmQualities = [];
+            renderGallery();
+            document.getElementById('downloadPartsContainer').innerHTML = '';
+            document.getElementById('filmQualitiesContainer').innerHTML = '';
+            document.getElementById('trailerPreview').innerHTML = '';
+            document.getElementById('singleLinkField').style.display = 'block';
+            document.getElementById('multiplePartsField').style.display = 'none';
+            await loadContent(); 
+            await loadManageList(); 
+        }
+
+        async function loadManageList() { 
+            const items = await firebaseGetItems(); 
+            const list = document.getElementById('manageList'); 
+            if (!list) return; 
+            if (items.length === 0) { 
+                list.innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No content yet</p>'; 
+                return; 
+            } 
+            list.innerHTML = items.map(function(item) { 
+                return '<div class="manage-item"><div><strong>' + item.title + '</strong><span style="color:var(--text-secondary);font-size:0.9rem;"> (' + item.category + ' - ' + item.platform + ')</span></div><div><button class="btn-edit" onclick="editItem(\'' + item.id + '\')">Edit</button><button class="btn-delete" onclick="deleteItem(\'' + item.id + '\')">Delete</button></div></div>'; 
+            }).join(''); 
+        }
+
+        async function deleteItem(id) { 
+            if (!confirm('Delete this item?')) return; 
+            await firebaseDeleteItem(id); 
+            await loadContent(); 
+            await loadManageList(); 
+            showNotification('Deleted!', 'success');
+        }
+
+        async function editItem(id) { 
+            const items = await firebaseGetItems();
+            let item = null; 
+            items.forEach(function(i) { if (i.id === id) item = i; }); 
+            if (!item) return; 
+            editingId = id;
+            document.getElementById('addContentBtn').textContent = 'Update Content';
+            document.getElementById('itemTitle').value = item.title; 
+            document.getElementById('itemCategory').value = item.category; 
+            toggleItemFields();
+            document.getElementById('itemPlatform').value = item.platform; 
+            document.getElementById('itemSubCategory').value = Array.isArray(item.subCategory) ? JSON.stringify(item.subCategory) : item.subCategory;
+            document.getElementById('itemShortDesc').value = item.shortDesc; 
+            document.getElementById('itemFullDesc').value = item.fullDesc; 
+            if (item.links) document.getElementById('itemLinks').value = item.links.join(', '); 
+            if (item.downloadLink) document.getElementById('singleDownloadLink').value = item.downloadLink;
+            if (item.image) { uploadedImageBase64 = item.image; document.getElementById('imagePreview').innerHTML = '<img src="' + item.image + '" alt="Preview">'; }
+            if (item.gallery) { galleryImages = item.gallery; renderGallery(); }
+            if (item.trailer) { trailerBase64 = item.trailer; document.getElementById('trailerPreview').innerHTML = '<video controls><source src="' + item.trailer + '" type="video/mp4"></video>'; }
+            if (item.licenseType) document.getElementById('itemLicense').value = item.licenseType; 
+            if (item.quality) document.getElementById('itemQuality').value = item.quality; 
+            if (item.year) document.getElementById('itemYear').value = item.year;
+            if (item.fileSize) document.getElementById('itemFileSize').value = item.fileSize;
+            if (item.fileType) document.getElementById('itemFileType').value = item.fileType;
+            if (item.downloadParts && item.downloadParts.length > 0) {
+                document.getElementById('hasMultipleParts').checked = true;
+                toggleGameDownloadType();
+                item.downloadParts.forEach(function(part) {
+                    addDownloadPart();
+                    const lastPart = document.querySelector('.part-item:last-child .part-link');
+                    if (lastPart) lastPart.value = part;
+                });
+            }
+            if (item.filmQualities && item.filmQualities.length > 0) {
+                item.filmQualities.forEach(function(quality) {
+                    addFilmQuality();
+                    const lastQuality = document.querySelector('.part-item:last-child');
+                    if (lastQuality) {
+                        lastQuality.querySelector('.quality-select').value = quality.quality;
+                        lastQuality.querySelector('.quality-link-input').value = quality.link;
+                    }
+                });
+            }
+            showAdminTab('add');
+            showNotification('Edit mode active', 'warning');
+        }
+
+        async function loadSettings() { 
+            const settings = await firebaseGetSettings(); 
+            const siteNameEl = document.getElementById('siteName'); 
+            const footerSiteNameEl = document.getElementById('footerSiteName'); 
+            if (siteNameEl) siteNameEl.textContent = settings.siteName; 
+            if (footerSiteNameEl) footerSiteNameEl.textContent = settings.siteName; 
+            document.title = settings.siteName + ' - Your Ultimate Download Hub'; 
+            const contactsContainer = document.getElementById('footerContacts'); 
+            if (contactsContainer) { 
+                let contactsHtml = ''; 
+                if (settings.contacts && settings.contacts.email) contactsHtml += '<a href="mailto:' + settings.contacts.email + '" title="Email"><i class="fas fa-envelope"></i></a>'; 
+                if (settings.contacts && settings.contacts.phone) contactsHtml += '<a href="tel:' + settings.contacts.phone + '" title="Phone"><i class="fas fa-phone"></i></a>'; 
+                if (settings.contacts && settings.contacts.instagram) contactsHtml += '<a href="https://instagram.com/' + settings.contacts.instagram + '" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>'; 
+                contactsContainer.innerHTML = contactsHtml; 
+            } 
+        }
+
+        function loadSettingsForm() { 
+            const settings = getSettings(); 
+            document.getElementById('settingSiteName').value = settings.siteName; 
+            document.getElementById('settingEmail').value = settings.contacts.email || ''; 
+            document.getElementById('settingPhone').value = settings.contacts.phone || ''; 
+            document.getElementById('settingInstagram').value = settings.contacts.instagram || ''; 
+        }
+
+        async function saveSettings() {
+            if (settingsSaveInProgress) { showNotification('Please wait...', 'warning'); return; }
+            settingsSaveInProgress = true;
+            try {
+                const settings = await firebaseGetSettings();
+                settings.siteName = document.getElementById('settingSiteName').value;
+                settings.contacts.email = document.getElementById('settingEmail').value;
+                settings.contacts.phone = document.getElementById('settingPhone').value;
+                settings.contacts.instagram = document.getElementById('settingInstagram').value;
+                const newPass = document.getElementById('settingPassword').value;
+                if (newPass && newPass.trim() !== '') settings.password = newPass;
+                await firebaseSaveSettings(settings);
+                await loadSettings();
+                showNotification('Settings saved!', 'success');
+            } catch(e) {
+                showNotification('Error saving settings', 'error');
+            } finally {
+                settingsSaveInProgress = false;
+            }
+        }
+
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            const duration = 1000;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        function incrementCounter(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            const current = parseInt(element.textContent) || 0;
+            animateCounter(elementId, current + 1);
+        }
+
+        async function updateStats() { 
+            const items = await firebaseGetItems(); 
+            const totalItemsEl = document.getElementById('total-items');
+            const totalDownloadsEl = document.getElementById('total-downloads');
+            const totalUsersEl = document.getElementById('total-users');
+            
+            if (totalItemsEl) animateCounter('total-items', items.length);
+            if (totalDownloadsEl) animateCounter('total-downloads', Math.floor(Math.random() * 10000) + 5000);
+            if (totalUsersEl) animateCounter('total-users', Math.floor(Math.random() * 5000) + 2000);
+        }
+
+        window.addEventListener('DOMContentLoaded', async function() {
+            console.log('✅ Zaki LoadSphere initialized!');
+            await initIndexedDB();
+            initializeFirebase();
+            loadTheme();
+            loadLanguage();
+            await loadSettings();
+            renderThemePanel();
+            renderCategoriesTree();
+            await loadContent();
+            await updateStats();
+            toggleItemFields();
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(function(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeModal(modal.id);
+                });
+            });
+            
+            window.addEventListener('beforeunload', function() {
+                navigator.sendBeacon('data:text/plain,save');
+            });
+        });
+    </script>
+</body>
+</html>
